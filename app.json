@@ -1,0 +1,31 @@
+{
+"name": "CppGramUc",
+"description": "Telegram MTProto client and connectivity test written in C++.",
+"repository": "https://github.com/Badxd/cppgram",
+"keywords": [
+"cppgram",
+"cpp",
+"telegram",
+"mtproto"
+],
+"stack": "container",
+"env": {
+"TG_API_ID": {
+"description": "Telegram API ID from https://my.telegram.org",
+"required": true
+},
+"TG_API_HASH": {
+"description": "Telegram API hash from https://my.telegram.org",
+"required": true
+},
+"TG_SESSION_STRING": {
+"description": "Telegram bot token from @BotFather",
+"required": true
+}
+},
+"formation": {
+"worker": {
+"quantity": 1
+}
+}
+}
