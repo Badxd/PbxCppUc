@@ -107,25 +107,27 @@ int main() {
         // ── USERBOT COMMANDS (".prefix") ──────────────────────────────────────
         // All commands edit the sent message in-place (standard userbot UX).
 
+        // NOTE: Use c.edit(m, text) shortcut — it takes the Message directly and
+        // resolves PeerRef + access_hash internally. Never pass m.chat manually.
+
         // .ping → Pong!
         client->on_message(cppgram::filters::outgoing() && cppgram::filters::command("ping", "."),
             [](cppgram::Client& c, const cppgram::Message& m) {
-                c.edit_text(m.chat, m.id, "🏓 Pong!");
+                c.edit(m, "🏓 Pong!");
             });
 
         // .id → show chat id + your user id
         client->on_message(cppgram::filters::outgoing() && cppgram::filters::command("id", "."),
-            [](cppgram::Client& c, const cppgram::Message& m) {
-                const std::int64_t uid = m.sender ? m.sender->id : 0;
-                c.edit_text(m.chat, m.id,
+            [&me](cppgram::Client& c, const cppgram::Message& m) {
+                c.edit(m,
                     "📌 chat id: " + std::to_string(m.chat.id) +
-                    "\n👤 user id: " + std::to_string(uid));
+                    "\n👤 user id: " + std::to_string(me.id));
             });
 
         // .time → UTC timestamp
         client->on_message(cppgram::filters::outgoing() && cppgram::filters::command("time", "."),
             [](cppgram::Client& c, const cppgram::Message& m) {
-                c.edit_text(m.chat, m.id, "🕐 " + utc_now());
+                c.edit(m, "🕐 " + utc_now());
             });
 
         // .echo <text> → edits message to just the text
@@ -133,16 +135,16 @@ int main() {
             [](cppgram::Client& c, const cppgram::Message& m) {
                 const std::string body = args_of(m.text);
                 if (body.empty()) {
-                    c.edit_text(m.chat, m.id, "Usage: .echo <text>");
+                    c.edit(m, "Usage: .echo <text>");
                     return;
                 }
-                c.edit_text(m.chat, m.id, html_escape(body), cppgram::ParseMode::Html);
+                c.edit(m, html_escape(body), cppgram::ParseMode::Html);
             });
 
         // .alive → confirms userbot is running
         client->on_message(cppgram::filters::outgoing() && cppgram::filters::command("alive", "."),
             [&me](cppgram::Client& c, const cppgram::Message& m) {
-                c.edit_text(m.chat, m.id,
+                c.edit(m,
                     "<b>⚡ cppgram userbot alive</b>\n"
                     "👤 User: <b>" + html_escape(me.first_name) + "</b>\n"
                     "🕐 Time: " + utc_now(),
